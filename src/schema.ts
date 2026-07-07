@@ -17,6 +17,7 @@ export type FieldType =
   | "multiselect"
   | "tags"
   | "paragraphs"
+  | "richtext"
   | "image"
   | "video"
   | "color"
@@ -547,7 +548,8 @@ export const SCHEMA: Collection[] = [
       { name: "date", label: "Date", type: "date", listColumn: true },
       { name: "read", label: "Read time", type: "text" },
       { name: "cover", label: "Cover image", type: "image" },
-      { name: "body", label: "Body", type: "paragraphs", help: "Each entry is a paragraph." },
+      { name: "body", label: "Body", type: "richtext", help: "Full article — use the toolbar for headings, lists, links and quotes." },
+      { name: "source", label: "Original URL", type: "url", help: "If Body is empty, the post links out to the full article here." },
     ],
   },
 
@@ -587,6 +589,36 @@ export const SCHEMA: Collection[] = [
         filterable: true,
       },
       { name: "location", label: "Location", type: "text", listColumn: true },
+      { name: "description", label: "Short description", type: "textarea", help: "Optional — a line or two shown under the role title." },
+      { name: "applyUrl", label: "Apply link", type: "url", help: "Optional — where 'Apply' goes. Defaults to the contact page." },
+    ],
+  },
+  {
+    slug: "careers",
+    name: "Careers page",
+    pluralName: "Careers page",
+    kind: "singleton",
+    group: "People",
+    icon: "FileText",
+    description: "Editorial copy for the /careers page. Roles, perks and culture stats are managed in their own sections.",
+    titleField: "heroTitle1",
+    fields: [
+      { name: "heroKicker", label: "Hero — kicker", type: "text" },
+      { name: "heroTitle1", label: "Hero — title line 1", type: "text" },
+      { name: "heroTitle2", label: "Hero — title line 2", type: "text" },
+      { name: "heroLede", label: "Hero — intro", type: "textarea" },
+      { name: "whyEyebrow", label: "Why-join — eyebrow", type: "text" },
+      { name: "whyLead", label: "Why-join — heading (bright part)", type: "textarea" },
+      { name: "whyMuted", label: "Why-join — heading (muted tail)", type: "textarea" },
+      { name: "perksEyebrow", label: "Perks — eyebrow", type: "text" },
+      { name: "perksHeading", label: "Perks — heading", type: "text" },
+      { name: "rolesEyebrow", label: "Open roles — eyebrow", type: "text" },
+      { name: "rolesIntro", label: "Open roles — intro", type: "textarea" },
+      { name: "ctaLead", label: "CTA — heading (bright part)", type: "text" },
+      { name: "ctaMuted", label: "CTA — heading (muted tail)", type: "text" },
+      { name: "ctaBody", label: "CTA — body", type: "textarea" },
+      { name: "ctaButtonLabel", label: "CTA — button label", type: "text" },
+      { name: "ctaButtonHref", label: "CTA — button link", type: "text" },
     ],
   },
 
@@ -826,6 +858,40 @@ export const SCHEMA: Collection[] = [
     fields: [
       { name: "email", label: "Email", type: "text", required: true, listColumn: true },
       { name: "source", label: "Source", type: "text", listColumn: true },
+    ],
+  },
+  {
+    slug: "applications",
+    name: "Application",
+    pluralName: "Applications",
+    kind: "collection",
+    group: "Inbox",
+    icon: "UserPlus",
+    description: "Job applications submitted from the careers page.",
+    titleField: "name",
+    subtitleField: "role",
+    public: false,
+    intakeOnly: true,
+    defaultSort: "created_desc",
+    fields: [
+      { name: "name", label: "Name", type: "text", required: true, listColumn: true },
+      { name: "email", label: "Email", type: "text", listColumn: true },
+      { name: "phone", label: "Phone", type: "text" },
+      { name: "role", label: "Role", type: "text", listColumn: true, filterable: true },
+      { name: "portfolio", label: "Portfolio / website", type: "text" },
+      { name: "linkedin", label: "LinkedIn", type: "text" },
+      { name: "resume", label: "Resume link", type: "text" },
+      { name: "message", label: "Cover note", type: "textarea" },
+      { name: "source", label: "Source", type: "text" },
+      {
+        name: "status",
+        label: "Status",
+        type: "select",
+        options: ["new", "screening", "interview", "offer", "hired", "rejected"],
+        listColumn: true,
+        filterable: true,
+        default: "new",
+      },
     ],
   },
 ];

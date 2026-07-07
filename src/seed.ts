@@ -10,8 +10,11 @@ import { createEntry, putSingleton, countEntries } from "./store";
 import { SERVICE_PAGES } from "./data/service-pages";
 import { REAL_CASES, REAL_CASE_SECTIONS, REAL_REELS, REAL_VIDEO_PROJECTS, PORTFOLIO } from "./data/work";
 import { CLIENTS } from "./data/clients";
+import BLOG_POSTS from "./data/blog-posts.json";
 
 const force = process.argv.includes("--force");
+// --only=<slug> replaces just one collection (delete + reinsert) — leaves the rest untouched.
+const only = process.argv.find((a) => a.startsWith("--only="))?.split("=")[1] || null;
 
 /* ───────────── source content (from the original site) ───────────── */
 
@@ -25,7 +28,7 @@ const SITE = {
   whatsapp: "https://wa.me/919463445566",
   address: "Office 11–12, 9th Floor, Sushma Infinium, Zirakpur, Punjab 140603",
   city: "Chandigarh · India",
-  founded: 2016,
+  founded: 2017,
   socials: [
     { label: "Instagram", handle: "@creativemonkindia", href: "https://instagram.com/creativemonkindia" },
     { label: "Facebook", handle: "@creativemonkindia", href: "https://facebook.com/creativemonkindia" },
@@ -35,7 +38,7 @@ const SITE = {
 };
 
 const HOME_HERO = {
-  eyebrow: "Creative & growth studio · since 2016",
+  eyebrow: "Creative & growth studio · since 2017",
   headline: ["Own your", "growth."],
   accentWord: "growth.",
   sub: "We design brands and build the growth engines behind them — strategy, web, content and performance under one roof, engineered to compound into something you own.",
@@ -186,48 +189,6 @@ const SERVICES_GRID = [
   { no: "12", title: "Analytics & CRO", desc: "Measure, learn, reinvest — month after month." },
 ];
 
-const POSTS = [
-  {
-    slug: "rent-vs-own-marketing", title: "Stop renting attention. Start owning it.",
-    excerpt: "Why the smartest brands treat marketing spend like a balance-sheet asset, not a monthly expense.",
-    category: "Strategy", date: "2026-05-18", read: "6 min",
-    body: [
-      "Most marketing budgets are rented. You pay, attention shows up, and the moment you stop paying it disappears. It is the treadmill almost every brand ends up on — faster and faster just to stay in place.",
-      "Owned growth works differently. A brand system, an email list, a library of content, a website that ranks — these keep working long after the invoice is paid. They compound. They are assets.",
-      "The shift is less about channels and more about intent: every campaign should leave something behind that makes the next one cheaper. That is the whole game.",
-    ],
-  },
-  {
-    slug: "reels-that-travel", title: "Anatomy of a reel that travels",
-    excerpt: "The first second, the loop, and the one idea — a teardown of what makes short-form actually move.",
-    category: "Motion", date: "2026-04-30", read: "5 min",
-    body: [
-      "A reel that travels earns the second second. The opening frame is a promise; if it is not specific, the scroll wins.",
-      "Then the loop. The best short-form is built to be watched twice without the viewer noticing — the end feeds the beginning.",
-      "And one idea. Not three. The reels that spread are ruthless about cutting everything that is not the single thing worth remembering.",
-    ],
-  },
-  {
-    slug: "design-system-for-small-brands", title: "Design systems aren't just for big brands",
-    excerpt: "How a lightweight token system saves small teams from the slow death of inconsistency.",
-    category: "Design", date: "2026-04-12", read: "7 min",
-    body: [
-      "A design system sounds like enterprise overhead. For a small brand it is the opposite — it is how five people ship like fifty without everything drifting.",
-      "Start with tokens: color, type, spacing. Then a handful of components. That is enough to make every new page, post and ad feel like the same company.",
-      "Consistency is not a constraint on creativity. It is what gives the bold moments somewhere to land.",
-    ],
-  },
-  {
-    slug: "measuring-what-matters", title: "Measuring what actually matters",
-    excerpt: "A practical framework for cutting through dashboard noise to the three numbers that move your business.",
-    category: "Growth", date: "2026-03-22", read: "8 min",
-    body: [
-      "Dashboards are where focus goes to die. Forty metrics, none of them decisions. The fix is brutal subtraction.",
-      "For most brands it comes down to three: cost to acquire, value over a lifetime, and the ratio between them. Everything else is a supporting actor.",
-      "Once those three are on the wall, every meeting gets shorter and every experiment gets a clearer verdict.",
-    ],
-  },
-];
 
 const TEAM = [
   { name: "Aarav Khanna", role: "Founder & Creative Director" },
@@ -292,7 +253,7 @@ const STATS = [
   { group: "stat_bar", value: "9", suffix: " yrs", label: "In the game" },
   { group: "stat_bar", value: "96", suffix: "%", label: "Client retention" },
   { group: "stat_bar", value: "4.9", suffix: "/5", label: "Average rating" },
-  { group: "timeline", value: "2016", suffix: "", label: "Founded in Chandigarh" },
+  { group: "timeline", value: "2017", suffix: "", label: "Founded in Chandigarh" },
   { group: "timeline", value: "40", suffix: "+", label: "In-house specialists" },
   { group: "timeline", value: "12", suffix: "+", label: "Industries served" },
   { group: "timeline", value: "27", suffix: " countries", label: "Clients shipped to" },
@@ -322,6 +283,25 @@ const CERTS = ["Global 100 — Firm of the Year '26", "Top Digital Marketing —
 const MARQUEE = ["Brand Strategy", "Web Design", "SEO", "Performance Marketing", "Social", "Motion & Reels", "E-commerce", "Identity"];
 const BENEFITS = ["Team first", "Remote-friendly", "Learning budget", "Pet friendly", "Food & snacks", "Flexible hours", "Health cover", "No-ego culture"];
 
+const CAREERS = {
+  heroKicker: "Careers",
+  heroTitle1: "Build things",
+  heroTitle2: "worth owning",
+  heroLede: "We're a small, in-house team that values craft, ownership and the long game — people who'd rather build an asset than rent attention.",
+  whyEyebrow: "Why Creative Monk",
+  whyLead: "No hand-offs, no ego, no busywork —",
+  whyMuted: "just sharp people shipping work they're proud to sign.",
+  perksEyebrow: "Perks",
+  perksHeading: "The things that keep good people building.",
+  rolesEyebrow: "Open roles",
+  rolesIntro: "Don't fit one neatly? Apply to the closest — we hire for craft, not checklists.",
+  ctaLead: "Don't see your role?",
+  ctaMuted: "Pitch us.",
+  ctaBody: "If you're great at something we'll need, tell us what you'd build here. The best hires rarely come from a job post.",
+  ctaButtonLabel: "Get in touch",
+  ctaButtonHref: "/contact",
+};
+
 /* ───────────── seed plan ───────────── */
 
 const SINGLETONS: Record<string, Record<string, unknown>> = {
@@ -330,6 +310,7 @@ const SINGLETONS: Record<string, Record<string, unknown>> = {
   story: STORY,
   review_summary: REVIEW_SUMMARY,
   locations: LOCATIONS,
+  careers: CAREERS,
 };
 
 const COLLECTIONS: Record<string, Record<string, unknown>[]> = {
@@ -343,7 +324,7 @@ const COLLECTIONS: Record<string, Record<string, unknown>[]> = {
   portfolio: PORTFOLIO as unknown as Record<string, unknown>[],
   reels: REAL_REELS as unknown as Record<string, unknown>[],
   video_projects: REAL_VIDEO_PROJECTS as unknown as Record<string, unknown>[],
-  posts: POSTS,
+  posts: BLOG_POSTS as unknown as Record<string, unknown>[],
   team: TEAM,
   roles: ROLES,
   clients: CLIENTS as unknown as Record<string, unknown>[],
@@ -371,17 +352,21 @@ async function run() {
   }
 
   for (const [slug, data] of Object.entries(SINGLETONS)) {
+    if (only && slug !== only) continue;
     const col = getCollection(slug);
     if (!col) { console.warn(`[seed] unknown collection ${slug}`); continue; }
-    if (!force && (await countEntries(slug)) > 0) { console.log(`[seed] skip ${slug} (exists)`); continue; }
+    if (!force && !only && (await countEntries(slug)) > 0) { console.log(`[seed] skip ${slug} (exists)`); continue; }
+    if (only) await db.execute({ sql: "DELETE FROM entries WHERE collection = ?", args: [slug] });
     await putSingleton(col, data);
     console.log(`[seed] singleton ${slug}`);
   }
 
   for (const [slug, rows] of Object.entries(COLLECTIONS)) {
+    if (only && slug !== only) continue;
     const col = getCollection(slug);
     if (!col) { console.warn(`[seed] unknown collection ${slug}`); continue; }
-    if (!force && (await countEntries(slug)) > 0) { console.log(`[seed] skip ${slug} (exists)`); continue; }
+    if (!force && !only && (await countEntries(slug)) > 0) { console.log(`[seed] skip ${slug} (exists)`); continue; }
+    if (only) { await db.execute({ sql: "DELETE FROM entries WHERE collection = ?", args: [slug] }); console.log(`[seed] --only=${slug}: replacing`); }
     for (const row of rows) await createEntry(col, row);
     console.log(`[seed] ${slug}: ${rows.length} rows`);
   }
